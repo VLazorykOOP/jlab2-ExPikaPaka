@@ -1,202 +1,8 @@
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
-
+import MyDate.Date;
+import MyMatrix.Matrix;
 public class Main {
-
-    public static class Date {
-        private byte year;
-        private int yearAddition;
-        private byte month;
-        private byte day;
-
-        // конструкторы
-        public Date(int day, int month, int year) {
-            this.yearAddition = year - (year % 100);
-            if(year > 100) this.yearAddition = year - (year % 100);
-
-            this.year = (byte)year;
-            this.month = (byte)month;
-            this.day = (byte)day;
-        }
-
-        public Date(String dateStr) {
-            String[] date = dateStr.split("\\.");
-
-            this.day = Byte.parseByte(date[0]);
-            this.month = Byte.parseByte(date[1]);
-
-            int yearInt = Integer.parseInt(date[2]);
-
-            this.yearAddition = yearInt - (yearInt % 100);
-            if(yearInt > 100) this.yearAddition = yearInt - (yearInt % 100);
-
-            this.year = (byte)(yearInt % 100);
-        }
-
-        public Date(LocalDate date) {
-            this.day = (byte) date.getDayOfMonth();
-            this.month = (byte) date.getMonthValue();
-
-            int yearInt = date.getYear();
-            this.yearAddition = yearInt - (yearInt % 100);
-            if(yearInt > 100) this.yearAddition = yearInt - (yearInt % 100);
-            this.year = (byte)(yearInt % 100);
-
-        }
-
-        // методы
-        public void setYear(int year) {
-            this.yearAddition = year - (year % 100);
-            if(year > 100) this.yearAddition = year - (year % 100);
-            this.year = (byte)(year % 100);
-        }
-
-        public void setMonth(int month) {
-            this.month = (byte)month;
-        }
-
-        public void setDay(int day) {
-            this.day = (byte)day;
-        }
-
-        public int getYear() {
-            return (int)year + yearAddition;
-        }
-
-        public int getMonth() {
-            return month;
-        }
-
-        public int getDay() {
-            return day;
-        }
-
-        public int getAdd() {
-            return yearAddition;
-        }
-
-        public boolean isLeapYear() {
-            int yearInt = year + yearAddition;
-            return (yearInt % 4 == 0 && yearInt % 100 != 0) || (yearInt % 400 == 0);
-        }
-
-        public Date addDays(int days) {
-            LocalDate date = LocalDate.of((int)year + yearAddition, month, day);
-
-            date = date.plusDays(days);
-            setDay(date.getDayOfMonth());
-            setMonth(date.getMonthValue());
-            setYear(date.getYear());
-            return this;
-        }
-
-        public Date subtractDays(int days) {
-            return addDays(-days);
-        }
-
-        public int compare(Date other) {
-            LocalDate thisDate = LocalDate.of(year + yearAddition, month, day);
-            LocalDate otherDate = LocalDate.of(other.year + other.yearAddition, other.month, other.day);
-            return thisDate.compareTo(otherDate);
-        }
-        public int daysBetween(Date other) {
-            LocalDate thisDate = LocalDate.of(year + yearAddition, month, day);
-            LocalDate otherDate = LocalDate.of(other.year + other.yearAddition, other.month, other.day);
-            return (int) ChronoUnit.DAYS.between(thisDate, otherDate);
-        }
-
-
-        public String toString() {
-            return String.format("%02d.%02d.%d", day, month, (int)year + yearAddition);
-        }
-
-        public boolean equals(Date other) {
-            if(day != other.day) return false;
-            if(month != other.month) return false;
-            if(year != other.year) return false;
-            return yearAddition == other.yearAddition;
-        }
-
-    }
-
-
-
-    public static class Matrix {
-        private double[][] matrix = new double[2][2];
-
-        public Matrix(double[][] matrix) {
-            this.matrix = matrix;
-        }
-
-        public Matrix(double a, double b, double c, double d) {
-            this.matrix[0][0] = a;
-            this.matrix[0][1] = b;
-            this.matrix[1][0] = c;
-            this.matrix[1][1] = d;
-        }
-
-        public double getDeterminant() {
-            return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0];
-        }
-
-        public Matrix getInverse() throws Exception {
-            double determinant = getDeterminant();
-            if (determinant == 0) {
-                throw new Exception("Детермінант = 0. Матриця вироджена!");
-            }
-            double[][] inverseMatrix = new double[2][2];
-            inverseMatrix[0][0] = matrix[1][1] / determinant;
-            inverseMatrix[0][1] = -matrix[0][1] / determinant;
-            inverseMatrix[1][0] = -matrix[1][0] / determinant;
-            inverseMatrix[1][1] = matrix[0][0] / determinant;
-            return new Matrix(inverseMatrix);
-        }
-
-        public Matrix multiply(Matrix other) {
-            double[][] resultMatrix = new double[2][2];
-            for (int i = 0; i < 2; i++) {
-                for (int j = 0; j < 2; j++) {
-                    for (int k = 0; k < 2; k++) {
-                        resultMatrix[i][j] += matrix[i][k] * other.matrix[k][j];
-                    }
-                }
-            }
-            return new Matrix(resultMatrix);
-        }
-
-        public Matrix add(Matrix other) {
-            double[][] resultMatrix = new double[2][2];
-            for (int i = 0; i < 2; i++) {
-                for (int j = 0; j < 2; j++) {
-                    resultMatrix[i][j] = matrix[i][j] + other.matrix[i][j];
-                }
-            }
-            return new Matrix(resultMatrix);
-        }
-
-        public Matrix multiply(double scalar) {
-            double[][] resultMatrix = new double[2][2];
-            for (int i = 0; i < 2; i++) {
-                for (int j = 0; j < 2; j++) {
-                    resultMatrix[i][j] = matrix[i][j] * scalar;
-                }
-            }
-            return new Matrix(resultMatrix);
-        }
-
-        public String toString() {
-            String out = "";
-            for (int i = 0; i < 2; i++) {
-                for (int j = 0; j < 2; j++) {
-                    out += matrix[i][j] + " ";
-                }
-               out += "\n";
-            }
-            return out;
-        }
-    }
-
 
     public static void task1Test() {
         // Task 1 test
@@ -219,6 +25,14 @@ public class Main {
         System.out.println(date1.equals(date11));
         System.out.println(date1.equals(date2));
         System.out.println(date2.daysBetween(date1));
+
+
+
+        System.out.println(date1);
+        System.out.println(date2);
+        System.out.println(date1.before(date2));
+        System.out.println(date1.after(date2));
+
     }
 
     public static void task2Test() throws Exception {
