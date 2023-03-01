@@ -16,17 +16,21 @@ public class Matrix {
 
 
     public double getIJ(int i, int j) {
-        return matrix[i][j];
+        if((i > -1 && i < 2) && (j > -1 && j < 2)) {
+            return matrix[i][j];
+        }   else {
+            throw new RuntimeException("Index out of bound!");
+        }
     }
 
     public double getDeterminant() {
         return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0];
     }
 
-    public Matrix getInverse() throws Exception {
+    public Matrix getInverse() {
         double determinant = getDeterminant();
         if (determinant == 0) {
-            throw new Exception("Детермінант = 0. Матриця вироджена!");
+            throw new RuntimeException("Детермінант = 0. Матриця вироджена!");
         }
         double[][] inverseMatrix = new double[2][2];
         inverseMatrix[0][0] = matrix[1][1] / determinant;
@@ -37,6 +41,8 @@ public class Matrix {
     }
 
     public Matrix multiply(Matrix other) {
+        if(other == null) return this;
+
         double[][] resultMatrix = new double[2][2];
         for (int i = 0; i < 2; i++) {
             for (int j = 0; j < 2; j++) {
@@ -49,6 +55,8 @@ public class Matrix {
     }
 
     public Matrix add(Matrix other) {
+        if(other == null) return this;
+
         double[][] resultMatrix = new double[2][2];
         for (int i = 0; i < 2; i++) {
             for (int j = 0; j < 2; j++) {

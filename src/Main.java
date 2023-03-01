@@ -35,7 +35,7 @@ public class Main {
 
     }
 
-    public static void task2Test() throws Exception {
+    public static void task2Test() {
         Matrix A = new Matrix(new double[][]{{1, 2}, {3, 4}});
         Matrix B = new Matrix(5, 6, 7, 8);
 
@@ -98,7 +98,7 @@ public class Main {
     }
 
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         System.out.println("Java Lab 2 ");
             Scanner cin = new Scanner(System.in);
         // write your code here
